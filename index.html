@@ -10,7 +10,6 @@
     width: 300px;
     height: 300px;
     display: block;
-    border: 1px solid black; /* Optional: to see the canvas boundaries */
   }
   .button {
     padding: 10px;
@@ -45,8 +44,12 @@ function createPattern() {
   // Clear previous pattern
   ctx.clearRect(0, 0, width, height);
 
+  // Set a random background color for the canvas
+  ctx.fillStyle = getRandomColor();
+  ctx.fillRect(0, 0, width, height);
+
   // Generate random points for the Voronoi diagram
-  var points = d3.range(30).map(function(d) { // 30 points for a less crowded diagram
+  var points = d3.range(100).map(function(d) {
     return [Math.random() * width, Math.random() * height];
   });
 
@@ -54,33 +57,31 @@ function createPattern() {
   var voronoi = d3.voronoi().extent([[0, 0], [width, height]]);
   var diagram = voronoi(points);
 
-  // Optionally, set a stroke style for the diagram edges if you wish to see the lines
-  ctx.strokeStyle = '#000';
-  ctx.lineWidth = 0.5;
+  // Increase stroke width
+  ctx.lineWidth = 0;
 
-  // Draw the Voronoi polygons
+  // Draw the Voronoi polygons with rounded corners
   diagram.cells.forEach(function(cell) {
     if (cell) {
-      var points = cell.halfedges.map(function(i) {
-        var edge = diagram.edges[i];
-        return edge[0]; // Get the start point of the edge
-      });
-      
-      // To ensure the shape is closed, push the first point to the end of the array
-      points.push(points[0]);
-      
       ctx.beginPath();
-      ctx.moveTo(points[0][0], points[0][1]);
 
-      // Draw lines to each point in the cell
-      points.forEach(function(point) {
-        ctx.lineTo(point[0], point[1]);
+      var startEdge = diagram.edges[cell.halfedges[0]];
+      var startPoint = startEdge.left || startEdge.right;
+      ctx.moveTo(startPoint[0], startPoint[1]);
+
+      cell.halfedges.forEach(function(i, index, halfedges) {
+        var edge = diagram.edges[i];
+        var nextEdge = diagram.edges[halfedges[(index + 1) % halfedges.length]];
+        var midpoint = [(edge[0][0] + nextEdge[1][0]) / 2, (edge[0][1] + nextEdge[1][1]) / 2];
+
+        // Draw a line to the midpoint and then to the next starting point
+        ctx.quadraticCurveTo(edge[1][0], edge[1][1], midpoint[0], midpoint[1]);
       });
-      
+
       ctx.closePath();
       ctx.fillStyle = getRandomColor();
       ctx.fill();
-      ctx.stroke(); // Draw the cell edges
+      ctx.stroke();
     }
   });
 }
@@ -99,3 +100,4 @@ function savePattern() {
 </script>
 </body>
 </html>
+
