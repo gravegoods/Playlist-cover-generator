@@ -3,16 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Generative Art</title>
+<title>Generative Art with Voronoi</title>
+<script src="https://d3js.org/d3.v5.min.js"></script>
 <style>
   #artCanvas {
-    /* Define size and default background color */
     width: 300px;
     height: 300px;
-    display: block; /* to prevent default line break */
-    background-color: #000; /* Default background */
+    display: block;
   }
-  /* Style your buttons */
   .button {
     padding: 10px;
     margin: 5px;
@@ -36,70 +34,43 @@ function getRandomColor() {
   return color;
 }
 
-// Function to generate seed points
-function generateSeedPoints(numberOfPoints, width, height) {
-  var points = [];
-  for (var i = 0; i < numberOfPoints; i++) {
-    points.push({
-      x: Math.random() * width,
-      y: Math.random() * height
-    });
-  }
-  return points;
-}
-
-// Function to generate the vertices of the polygons
-function generatePolygonVertices(center, vertexCount) {
-  var vertices = [];
-  var angleStep = (Math.PI * 2) / vertexCount;
-  for (var i = 0; i < vertexCount; i++) {
-    var angle = angleStep * i;
-    var radius = Math.random() * (50 - 20) + 20; // Radius between 20 and 50
-    var x = center.x + Math.cos(angle) * radius;
-    var y = center.y + Math.sin(angle) * radius;
-    vertices.push({x: x, y: y});
-  }
-  return vertices;
-}
-
-// Function to create the pattern
+// Function to create the Voronoi pattern
 function createPattern() {
   var canvas = document.getElementById('artCanvas');
   var ctx = canvas.getContext('2d');
+  var width = canvas.width;
+  var height = canvas.height;
 
   // Clear previous pattern
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.clearRect(0, 0, width, height);
 
   // Set a random background color for the canvas
   ctx.fillStyle = getRandomColor();
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillRect(0, 0, width, height);
 
-  // Generate a set of seed points for the pattern
-  var points = generateSeedPoints(10, canvas.width, canvas.height);
+  // Generate random points for the Voronoi diagram
+  var points = d3.range(100).map(function(d) {
+    return [Math.random() * width, Math.random() * height];
+  });
 
-  // Draw polygons around each seed point
-  points.forEach(function(seed) {
-    // Start the path for the polygon
-    ctx.beginPath();
+  // Create the Voronoi diagram
+  var voronoi = d3.voronoi().extent([[0, 0], [width, height]]);
+  var diagram = voronoi(points);
 
-    // Determine the number of vertices for this polygon, between 8 and 12
-    var vertexCount = Math.floor(Math.random() * (12 - 8 + 1)) + 8;
-
-    // Generate vertices for the polygon around the seed point
-    var vertices = generatePolygonVertices(seed, vertexCount);
-
-    // Move to the first vertex
-    ctx.moveTo(vertices[0].x, vertices[0].y);
-
-    // Draw lines to each of the remaining vertices
-    vertices.forEach(function(vertex, index) {
-      ctx.lineTo(vertex.x, vertex.y);
-    });
-
-    // Close the path and fill the polygon
-    ctx.closePath();
-    ctx.fillStyle = getRandomColor();
-    ctx.fill();
+  // Draw the Voronoi polygons
+  diagram.cells.forEach(function(cell) {
+    if (cell) {
+      ctx.beginPath();
+      cell.halfedges.forEach(function(i) {
+        var edge = diagram.edges[i];
+        ctx.moveTo(edge[0][0], edge[0][1]);
+        ctx.lineTo(edge[1][0], edge[1][1]);
+      });
+      ctx.closePath();
+      ctx.fillStyle = getRandomColor();
+      ctx.fill();
+      ctx.stroke(); // Optional, if you want the edges to be visible
+    }
   });
 }
 
@@ -114,10 +85,6 @@ function savePattern() {
   downloadLink.click();
   document.body.removeChild(downloadLink);
 }
-
-// Call createPattern to initialize the pattern
-createPattern();
 </script>
 </body>
 </html>
-
