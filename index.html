@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Generative Art with Tuber Shape</title>
+<title>Generative Art with Tuber Shape Packing</title>
 <style>
   #artCanvas {
     width: 300px;
@@ -20,47 +20,63 @@
 </head>
 <body>
 <canvas id="artCanvas" width="300" height="300"></canvas>
-<button class="button" onclick="createTuberShape()">Create</button>
+<button class="button" onclick="createTuberShapePacking()">Create</button>
 <button class="button" onclick="savePattern()">Save</button>
 
 <script>
-function createTuberShape() {
+function createTuberShape(ctx, centerX, centerY, maxRadius) {
+  var sides = Math.floor(Math.random() * (12 - 8 + 1)) + 8;
+  ctx.beginPath();
+  var startAngle = Math.random() * Math.PI * 2;
+  var angleIncrement = (2 * Math.PI) / sides;
+  for (var i = 0; i < sides; i++) {
+    var angle = startAngle + i * angleIncrement;
+    var sideLength = maxRadius * (0.8 + Math.random() * 0.4); // Side length 80%-120% of maxRadius
+    var x = centerX + sideLength * Math.cos(angle);
+    var y = centerY + sideLength * Math.sin(angle);
+    ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+  ctx.fillStyle = '#8B4513'; // Dark orange color
+  ctx.fill();
+}
+
+// A simple check to see if a point is inside an already drawn shape
+// This function needs more complexity for a robust solution
+function isInShape(shapes, x, y, minDist) {
+  return shapes.some(shape => {
+    var dx = shape.centerX - x;
+    var dy = shape.centerY - y;
+    var distance = Math.sqrt(dx * dx + dy * dy);
+    return distance < (shape.maxRadius + minDist);
+  });
+}
+
+function createTuberShapePacking() {
   var canvas = document.getElementById('artCanvas');
   var ctx = canvas.getContext('2d');
   var width = canvas.width;
   var height = canvas.height;
-
-  // Clear previous content
   ctx.clearRect(0, 0, width, height);
-
-  // Set the dark green background
   ctx.fillStyle = '#013220'; // Dark green
   ctx.fillRect(0, 0, width, height);
 
-  // Define the tuber shape in the center with a random number of sides between 8 and 12
-  var sides = Math.floor(Math.random() * (12 - 8 + 1)) + 8;
-  var centerX = width / 2;
-  var centerY = height / 2;
-  var maxRadius = 60; // Maximum radius
-  var minRadius = 50; // Adjusted minimum radius for less distinct indentation
+  var shapes = [];
+  var attempts = 50; // Limit attempts to avoid infinite loops
+  var minDist = 10; // Minimum distance between shapes
 
-  // Draw the tuber shape
-  ctx.beginPath();
-  var startAngle = Math.random() * Math.PI * 2; // Random start angle for irregularity
-  for (var i = 0; i < sides; i++) {
-    // Randomly decide if the angle should be inverted
-    var inverted = Math.random() > 0.9; // 10% chance of inversion
-    var angle = startAngle + (i * (2 * Math.PI / sides));
-    var rad = inverted ? minRadius : (maxRadius + Math.random() * 20 - 10); // Less distinct inversion
-    var x = centerX + rad * Math.cos(angle);
-    var y = centerY + rad * Math.sin(angle);
-    ctx.lineTo(x, y);
+  while (shapes.length < 10 && attempts > 0) { // Target number of shapes
+    var maxRadius = Math.random() * 20 + 10; // Random max radius between 10 and 30
+    var centerX = Math.random() * (width - 2 * maxRadius) + maxRadius;
+    var centerY = Math.random() * (height - 2 * maxRadius) + maxRadius;
+
+    if (!isInShape(shapes, centerX, centerY, minDist)) {
+      createTuberShape(ctx, centerX, centerY, maxRadius);
+      shapes.push({ centerX, centerY, maxRadius });
+    } else {
+      attempts--;
+    }
   }
-  ctx.closePath();
-
-  // Fill the tuber shape
-  ctx.fillStyle = '#8B4513'; // Dark orange color
-  ctx.fill();
 }
 
 function savePattern() {
@@ -68,7 +84,7 @@ function savePattern() {
   var dataURL = canvas.toDataURL('image/png');
   var downloadLink = document.createElement('a');
   downloadLink.href = dataURL;
-  downloadLink.download = 'tuber-shape.png';
+  downloadLink.download = 'tuber-shape-packing.png';
   document.body.appendChild(downloadLink);
   downloadLink.click();
   document.body.removeChild(downloadLink);
