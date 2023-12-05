@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Generative Art with Voronoi</title>
-<script src="https://d3js.org/d3.v5.min.js"></script>
+<title>Generative Art with Tuber Shapes</title>
 <style>
   #artCanvas {
     width: 300px;
     height: 300px;
     display: block;
+    background-color: #8B4513; /* Dark brown background, as in your provided example */
   }
   .button {
     padding: 10px;
@@ -20,79 +20,59 @@
 </head>
 <body>
 <canvas id="artCanvas" width="300" height="300"></canvas>
-<button class="button" onclick="createPattern()">Create</button>
+<button class="button" onclick="createRandomTuberShapes()">Create</button>
 <button class="button" onclick="savePattern()">Save</button>
 
 <script>
-// Function to generate a random color
-function getRandomColor() {
-  var letters = '0123456789ABCDEF';
-  var color = '#';
-  for (var i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
-  }
-  return color;
-}
-
-// Function to create the Voronoi pattern
-function createPattern() {
+// Function to create random tuber shapes
+function createRandomTuberShapes() {
   var canvas = document.getElementById('artCanvas');
   var ctx = canvas.getContext('2d');
   var width = canvas.width;
   var height = canvas.height;
 
-  // Clear previous pattern
+  // Clear previous content
   ctx.clearRect(0, 0, width, height);
 
-  // Set a random background color for the canvas
-  ctx.fillStyle = getRandomColor();
+  // Set a dark brown background
+  ctx.fillStyle = '#8B4513'; // This matches the background color of your example
   ctx.fillRect(0, 0, width, height);
 
-  // Generate random points for the Voronoi diagram
-  var points = d3.range(100).map(function(d) {
-    return [Math.random() * width, Math.random() * height];
-  });
+  // Generate a random number of tuber shapes
+  var shapeCount = Math.floor(Math.random() * 4) + 1; // 1 to 4 shapes
+  
+  for (var i = 0; i < shapeCount; i++) {
+    // Define the tuber shape with a random number of sides
+    var sides = Math.floor(Math.random() * 5) + 5; // 5 to 9 sides
+    var centerX = Math.random() * width;
+    var centerY = Math.random() * height;
+    var radius = Math.random() * 40 + 20; // Size range between 20 and 60
 
-  // Create the Voronoi diagram
-  var voronoi = d3.voronoi().extent([[0, 0], [width, height]]);
-  var diagram = voronoi(points);
-
-  // Increase stroke width
-  ctx.lineWidth = 0;
-
-  // Draw the Voronoi polygons with rounded corners
-  diagram.cells.forEach(function(cell) {
-    if (cell) {
-      ctx.beginPath();
-
-      var startEdge = diagram.edges[cell.halfedges[0]];
-      var startPoint = startEdge.left || startEdge.right;
-      ctx.moveTo(startPoint[0], startPoint[1]);
-
-      cell.halfedges.forEach(function(i, index, halfedges) {
-        var edge = diagram.edges[i];
-        var nextEdge = diagram.edges[halfedges[(index + 1) % halfedges.length]];
-        var midpoint = [(edge[0][0] + nextEdge[1][0]) / 2, (edge[0][1] + nextEdge[1][1]) / 2];
-
-        // Draw a line to the midpoint and then to the next starting point
-        ctx.quadraticCurveTo(edge[1][0], edge[1][1], midpoint[0], midpoint[1]);
-      });
-
-      ctx.closePath();
-      ctx.fillStyle = getRandomColor();
-      ctx.fill();
-      ctx.stroke();
+    // Draw the tuber shape
+    ctx.beginPath();
+    var startAngle = Math.random() * Math.PI * 2; // Random start angle
+    for (var j = 0; j < sides; j++) {
+      var angle = startAngle + j * (2 * Math.PI / sides);
+      // Randomize the radius for each vertex
+      var rad = radius + Math.random() * 20 - 10; // Randomize size a bit
+      var x = centerX + rad * Math.cos(angle);
+      var y = centerY + rad * Math.sin(angle);
+      ctx.lineTo(x, y);
     }
-  });
+    ctx.closePath();
+
+    // Fill the tuber shape
+    ctx.fillStyle = '#FF8C00'; // Dark orange color
+    ctx.fill();
+  }
 }
 
-// Function to save the pattern as an image
 function savePattern() {
   var canvas = document.getElementById('artCanvas');
   var dataURL = canvas.toDataURL('image/png');
   var downloadLink = document.createElement('a');
   downloadLink.href = dataURL;
-  downloadLink.download = 'generated-pattern.png';
+  downloadLink.download = 'random-tuber-shapes.png';
   document.body.appendChild(downloadLink);
   downloadLink.click();
   document.body.removeChild(downloadLink);
