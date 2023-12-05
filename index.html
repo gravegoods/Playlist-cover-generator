@@ -10,6 +10,7 @@
     width: 300px;
     height: 300px;
     display: block;
+    border: 1px solid black; /* Optional: to see the canvas boundaries */
   }
   .button {
     padding: 10px;
@@ -44,12 +45,8 @@ function createPattern() {
   // Clear previous pattern
   ctx.clearRect(0, 0, width, height);
 
-  // Set a random background color for the canvas
-  ctx.fillStyle = getRandomColor();
-  ctx.fillRect(0, 0, width, height);
-
   // Generate random points for the Voronoi diagram
-  var points = d3.range(100).map(function(d) {
+  var points = d3.range(30).map(function(d) { // 30 points for a less crowded diagram
     return [Math.random() * width, Math.random() * height];
   });
 
@@ -57,19 +54,33 @@ function createPattern() {
   var voronoi = d3.voronoi().extent([[0, 0], [width, height]]);
   var diagram = voronoi(points);
 
+  // Optionally, set a stroke style for the diagram edges if you wish to see the lines
+  ctx.strokeStyle = '#000';
+  ctx.lineWidth = 0.5;
+
   // Draw the Voronoi polygons
   diagram.cells.forEach(function(cell) {
     if (cell) {
-      ctx.beginPath();
-      cell.halfedges.forEach(function(i) {
+      var points = cell.halfedges.map(function(i) {
         var edge = diagram.edges[i];
-        ctx.moveTo(edge[0][0], edge[0][1]);
-        ctx.lineTo(edge[1][0], edge[1][1]);
+        return edge[0]; // Get the start point of the edge
       });
+      
+      // To ensure the shape is closed, push the first point to the end of the array
+      points.push(points[0]);
+      
+      ctx.beginPath();
+      ctx.moveTo(points[0][0], points[0][1]);
+
+      // Draw lines to each point in the cell
+      points.forEach(function(point) {
+        ctx.lineTo(point[0], point[1]);
+      });
+      
       ctx.closePath();
       ctx.fillStyle = getRandomColor();
       ctx.fill();
-      ctx.stroke(); // Optional, if you want the edges to be visible
+      ctx.stroke(); // Draw the cell edges
     }
   });
 }
