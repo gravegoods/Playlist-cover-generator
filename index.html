@@ -6,10 +6,10 @@
 <title>Generative Art</title>
 <style>
   #artCanvas {
-    /* Define size and background color */
+    /* Define size and default background color */
     width: 300px;
     height: 300px;
-    margin: 10px;
+    display: block; /* to prevent default line break */
     background-color: #000; /* Default background */
   }
   /* Style your buttons */
@@ -22,11 +22,11 @@
 </head>
 <body>
 <canvas id="artCanvas" width="300" height="300"></canvas>
-<button class="button" id="createButton">Create</button>
-<button class="button" id="saveButton">Save</button>
+<button class="button" onclick="createPattern()">Create</button>
+<button class="button" onclick="savePattern()">Save</button>
 
 <script>
-// Define the getRandomColor function to generate a random color
+// Function to generate a random color
 function getRandomColor() {
   var letters = '0123456789ABCDEF';
   var color = '#';
@@ -36,49 +36,10 @@ function getRandomColor() {
   return color;
 }
 
-function createPattern() {
-  var canvas = document.getElementById('artCanvas');
-  var ctx = canvas.getContext('2d');
-  
-  // Clear previous pattern
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // Generate a large number of random points
-  var points = generateRandomPoints(100, canvas.width, canvas.height);
-
-  // Sort points by x-coordinate
-  points.sort(function(a, b) { return a.x - b.x; });
-
-  // Draw lines between points to simulate edges of shapes
-  points.forEach(function(point, index) {
-    // Connect each point to several others to create polygons
-    var maxConnections = 3; // Limit the number of connections to simulate the Voronoi look
-    for (var i = 0; i < maxConnections; i++) {
-      // Connect to the next point in the sorted array
-      var nextIndex = (index + 1 + i) % points.length;
-      var nextPoint = points[nextIndex];
-
-      // Draw line to the next point
-      ctx.beginPath();
-      ctx.moveTo(point.x, point.y);
-      ctx.lineTo(nextPoint.x, nextPoint.y);
-      ctx.stroke();
-    }
-  });
-
-  // Fill in the shapes
-  // Note: This is a simplification and won't fill accurately like a true Voronoi diagram.
-  points.forEach(function(point) {
-    ctx.fillStyle = getRandomColor();
-    ctx.beginPath();
-    ctx.arc(point.x, point.y, 5, 0, Math.PI * 2);
-    ctx.fill();
-  });
-}
-
-function generateRandomPoints(count, width, height) {
+// Function to generate seed points
+function generateSeedPoints(numberOfPoints, width, height) {
   var points = [];
-  for (var i = 0; i < count; i++) {
+  for (var i = 0; i < numberOfPoints; i++) {
     points.push({
       x: Math.random() * width,
       y: Math.random() * height
@@ -87,18 +48,62 @@ function generateRandomPoints(count, width, height) {
   return points;
 }
 
-function getRandomColor() {
-  var letters = '0123456789ABCDEF';
-  var color = '#';
-  for (var i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
+// Function to generate the vertices of the polygons
+function generatePolygonVertices(center, vertexCount) {
+  var vertices = [];
+  var angleStep = (Math.PI * 2) / vertexCount;
+  for (var i = 0; i < vertexCount; i++) {
+    var angle = angleStep * i;
+    var radius = Math.random() * (50 - 20) + 20; // Radius between 20 and 50
+    var x = center.x + Math.cos(angle) * radius;
+    var y = center.y + Math.sin(angle) * radius;
+    vertices.push({x: x, y: y});
   }
-  return color;
+  return vertices;
 }
 
+// Function to create the pattern
+function createPattern() {
+  var canvas = document.getElementById('artCanvas');
+  var ctx = canvas.getContext('2d');
 
+  // Clear previous pattern
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-// Define the savePattern function to save the canvas as an image
+  // Set a random background color for the canvas
+  ctx.fillStyle = getRandomColor();
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Generate a set of seed points for the pattern
+  var points = generateSeedPoints(10, canvas.width, canvas.height);
+
+  // Draw polygons around each seed point
+  points.forEach(function(seed) {
+    // Start the path for the polygon
+    ctx.beginPath();
+
+    // Determine the number of vertices for this polygon, between 8 and 12
+    var vertexCount = Math.floor(Math.random() * (12 - 8 + 1)) + 8;
+
+    // Generate vertices for the polygon around the seed point
+    var vertices = generatePolygonVertices(seed, vertexCount);
+
+    // Move to the first vertex
+    ctx.moveTo(vertices[0].x, vertices[0].y);
+
+    // Draw lines to each of the remaining vertices
+    vertices.forEach(function(vertex, index) {
+      ctx.lineTo(vertex.x, vertex.y);
+    });
+
+    // Close the path and fill the polygon
+    ctx.closePath();
+    ctx.fillStyle = getRandomColor();
+    ctx.fill();
+  });
+}
+
+// Function to save the pattern as an image
 function savePattern() {
   var canvas = document.getElementById('artCanvas');
   var dataURL = canvas.toDataURL('image/png');
@@ -110,10 +115,9 @@ function savePattern() {
   document.body.removeChild(downloadLink);
 }
 
-// Attach event listeners to the buttons
-document.getElementById('createButton').addEventListener('click', createPattern);
-document.getElementById('saveButton').addEventListener('click', savePattern);
-
+// Call createPattern to initialize the pattern
+createPattern();
 </script>
 </body>
 </html>
+
