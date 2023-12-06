@@ -20,7 +20,7 @@
 </head>
 <body>
 <canvas id="artCanvas" width="300" height="300"></canvas>
-<button class="button" onclick="createTuberShapePacking()">Create</button>
+<button class="button" onclick="fillCanvasWithTuberShapes()">Fill Canvas</button>
 <button class="button" onclick="savePattern()">Save</button>
 
 <script>
@@ -31,50 +31,48 @@ function createTuberShape(ctx, centerX, centerY, maxRadius) {
   var angleIncrement = (2 * Math.PI) / sides;
   for (var i = 0; i < sides; i++) {
     var angle = startAngle + i * angleIncrement;
-    var sideLength = maxRadius * (0.8 + Math.random() * 0.4); // Side length 80%-120% of maxRadius
+    var sideLength = maxRadius * (0.8 + Math.random() * 0.4);
     var x = centerX + sideLength * Math.cos(angle);
     var y = centerY + sideLength * Math.sin(angle);
     ctx.lineTo(x, y);
   }
   ctx.closePath();
-  ctx.fillStyle = '#8B4513'; // Dark orange color
+  ctx.fillStyle = '#8B4513';
   ctx.fill();
 }
 
-// A simple check to see if a point is inside an already drawn shape
-// This function needs more complexity for a robust solution
-function isInShape(shapes, x, y, minDist) {
+function isInShape(shapes, x, y, radius) {
   return shapes.some(shape => {
     var dx = shape.centerX - x;
     var dy = shape.centerY - y;
     var distance = Math.sqrt(dx * dx + dy * dy);
-    return distance < (shape.maxRadius + minDist);
+    return distance < (shape.radius + radius) * 0.9; // Adjusted for tighter yet non-overlapping packing
   });
 }
 
-function createTuberShapePacking() {
+function fillCanvasWithTuberShapes() {
   var canvas = document.getElementById('artCanvas');
   var ctx = canvas.getContext('2d');
   var width = canvas.width;
   var height = canvas.height;
   ctx.clearRect(0, 0, width, height);
-  ctx.fillStyle = '#013220'; // Dark green
+  ctx.fillStyle = '#013220';
   ctx.fillRect(0, 0, width, height);
 
   var shapes = [];
-  var attempts = 50; // Limit attempts to avoid infinite loops
-  var minDist = 10; // Minimum distance between shapes
+  var maxAttempts = 1000;
+  var attempts = 0;
 
-  while (shapes.length < 10 && attempts > 0) { // Target number of shapes
-    var maxRadius = Math.random() * 20 + 10; // Random max radius between 10 and 30
-    var centerX = Math.random() * (width - 2 * maxRadius) + maxRadius;
-    var centerY = Math.random() * (height - 2 * maxRadius) + maxRadius;
+  while (attempts < maxAttempts) {
+    var radius = Math.random() * 20 + 10;
+    var x = Math.random() * (width - radius * 2) + radius;
+    var y = Math.random() * (height - radius * 2) + radius;
 
-    if (!isInShape(shapes, centerX, centerY, minDist)) {
-      createTuberShape(ctx, centerX, centerY, maxRadius);
-      shapes.push({ centerX, centerY, maxRadius });
+    if (!isInShape(shapes, x, y, radius)) {
+      createTuberShape(ctx, x, y, radius);
+      shapes.push({ centerX: x, centerY: y, radius });
     } else {
-      attempts--;
+      attempts++;
     }
   }
 }
@@ -92,3 +90,4 @@ function savePattern() {
 </script>
 </body>
 </html>
+
