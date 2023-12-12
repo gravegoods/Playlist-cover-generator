@@ -9,7 +9,7 @@
     width: 300px;
     height: 300px;
     display: block;
-    background-color: #013220; /* Dark green background */
+    background-color: #013220;
   }
   .button {
     padding: 10px;
@@ -46,7 +46,7 @@ function isInShape(shapes, x, y, radius) {
     var dx = shape.centerX - x;
     var dy = shape.centerY - y;
     var distance = Math.sqrt(dx * dx + dy * dy);
-    return distance < (shape.radius + radius) * 0.9; // Adjusted for tighter yet non-overlapping packing
+    return distance < (shape.radius + radius) * 0.9; 
   });
 }
 
