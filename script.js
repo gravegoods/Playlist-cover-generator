@@ -130,6 +130,8 @@ World.add(world, [ground, leftWall, rightWall, topWall, ...shapes]);
 
 ////////////////////// interactivity ////////////////////
 
+
+// shapes are draggable
 var mouse = Mouse.create(render.canvas);
 
 var mouseConstraint = MouseConstraint.create(engine, {
@@ -145,17 +147,31 @@ var mouseConstraint = MouseConstraint.create(engine, {
 World.add(world, mouseConstraint);
 render.mouse = mouse;
 
-Matter.Events.on(mouseConstraint, 'mousedown', function(event) {
-    var mousePosition = event.mouse.position;
-    var bodies = Matter.Composite.allBodies(world);
+// right click on a shape to delete it
 
-    for (var i = 0; i < bodies.length; i++) {
-        if (Matter.Bounds.contains(bodies[i].bounds, mousePosition) && Matter.Vertices.contains(bodies[i].vertices, mousePosition)) {
-            Matter.World.remove(world, bodies[i]);
-            break;
+Matter.Events.on(mouseConstraint, 'mousedown', function(event) {
+    var mouse = event.mouse;
+    if (mouse.button === 2) {
+        var mousePosition = mouse.position;
+        var bodies = Matter.Composite.allBodies(world);
+
+        for (var i = 0; i < bodies.length; i++) {
+            if (Matter.Bounds.contains(bodies[i].bounds, mousePosition) && Matter.Vertices.contains(bodies[i].vertices, mousePosition)) {
+                Matter.World.remove(world, bodies[i]);
+                break;
+            }
         }
     }
 });
+
+// toggle gravity
+
+var isGravityEnabled = true; // Tracks the state of gravity
+
+function toggleGravity() {
+    isGravityEnabled = !isGravityEnabled;
+    engine.world.gravity.y = isGravityEnabled ? 1 : 0; // Toggles gravity between 1 and 0
+}
 
 ///////////////////// add new shape ///////////////////
 
@@ -163,7 +179,7 @@ function addShape() {
     var randomPotato = potatoes[Math.floor(Math.random() * potatoes.length)];
     var scale = 0.5 + Math.random();
     var scaledPotato = randomPotato.map(vertex => ({ x: vertex.x * scale, y: vertex.y * scale }));
-    var newShape = Bodies.fromVertices(200, 50, scaledPotato, { // Set the initial position
+    var newShape = Bodies.fromVertices(Math.random() * (300 - 100) + 100, 50, scaledPotato, { // Set the initial position
         render: {
             fillStyle: shapeColor,
             strokeStyle: wallColor,
@@ -195,7 +211,13 @@ document.getElementById('resetButton').addEventListener('click', function () {
 });
 document.getElementById('exportButton').addEventListener('click', exportCanvas);
 
-document.getElementById('addShapeButton').addEventListener('click', addShape);
+document.getElementById('addButton').addEventListener('click', addShape);
+
+document.addEventListener('contextmenu', function(event) {
+    event.preventDefault();
+});
+
+document.getElementById('toggleGravityButton').addEventListener('click', toggleGravity);
 
 
 
