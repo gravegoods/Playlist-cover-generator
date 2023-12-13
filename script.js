@@ -25,6 +25,7 @@ function getRandomWallColor() {
 
 // Set a random color for walls
 var wallColor = getRandomWallColor();
+var shapeColor = getRandomShapeColor();
 
 // Function to get a random color different from wallColor
 function getRandomShapeColor() {
@@ -105,7 +106,6 @@ for (var i = 0; i < rows; i++) {
         var scaledPotato = randomPotato.map(function(vertex) {
             return { x: vertex.x * scale, y: vertex.y * scale };
         });
-        var shapeColor = getRandomShapeColor(); // Get a random color for this shape
         var x = squareTopLeftX + j * (squareSize / columns) + 40;
         var y = squareTopLeftY + i * (squareSize / rows) + 40;
         shapes.push(Bodies.fromVertices(x, y, scaledPotato, {
@@ -159,4 +159,5 @@ function exportCanvas() {
 
 // Attach export function to button
 document.getElementById('exportButton').addEventListener('click', exportCanvas);
+
 
