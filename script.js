@@ -51,17 +51,19 @@ var render = Render.create({
     }
 });
 
+
 var squareTopLeftX = 0;
 var squareTopLeftY = 0;
 var squareSize = 400;
 
 var potatoes = [
-    Matter.Vertices.fromPath('40 0, 60 20, 70 50, 50 70, 30 60, 10 40, 0 20'),
-    Matter.Vertices.fromPath('30 10, 50 0, 70 20, 60 40, 40 60, 20 50, 10 30'),
+    //Matter.Vertices.fromPath('40 0, 60 20, 70 50, 50 70, 30 60, 10 40, 0 20'),
+    //Matter.Vertices.fromPath('30 10, 50 0, 70 20, 60 40, 40 60, 20 50, 10 30'),
     //Matter.Vertices.fromPath('10 0, 70 10, 80 30, 70 60, 50 70, 20 60, 10 40, 0 30'),
-    Matter.Vertices.fromPath('20 20, 40 10, 60 20, 70 40, 60 60, 40 70, 20 60, 10 40'),
-    Matter.Vertices.fromPath('30 10, 50 10, 70 30, 60 60, 50 70, 30 70, 10 50, 10 30'),
-    Matter.Vertices.fromPath('50 0, 85 20, 100 50, 85 80, 50 100, 15 80, 0 50, 15 20'),
+    //Matter.Vertices.fromPath('20 20, 40 10, 60 20, 70 40, 60 60, 40 70, 20 60, 10 40'),
+    //Matter.Vertices.fromPath('30 10, 50 10, 70 30, 60 60, 50 70, 30 70, 10 50, 10 30'),
+    //Matter.Vertices.fromPath('50 0, 85 20, 100 50, 85 80, 50 100, 15 80, 0 50, 15 20'),
+    Matter.Vertices.fromPath('0 37, 3 55, 18 74, 46 71, 60 60, 67 30, 65 10, 62 4, 50 0, 32 18, 18 23'),
 ];
 
 var ground = Bodies.rectangle(squareTopLeftX + squareSize / 2, squareTopLeftY + squareSize, squareSize, 100, {
@@ -107,7 +109,9 @@ for (var i = 0; i < rows; i++) {
                 fillStyle: shapeColor,
                 strokeStyle: wallColor,
                 lineWidth: 5
-            }
+            },
+            removeCollinear: 0.0 // Adjust this value as needed
+
         }));
     }
 }
