@@ -74,7 +74,19 @@ var potatoes = [
     Matter.Vertices.fromPath('0 30, 15 40, 68 40, 58 28, 28 18, 8 22'),
     Matter.Vertices.fromPath('0 8, 0 21, 8 32, 14 35, 23 41, 36 53, 45 58, 57 61, 68 54, 80 43, 77 28, 68 8, 58 0, 48 3, 38 3, 25 0, 3 0'),
     Matter.Vertices.fromPath('0 17, 6 31, 29 48, 53 36, 53 18, 43 6, 18 1, 7 7 '),
+    Matter.Vertices.fromPath('0 10, 3 23, 18 43, 31 50, 49 47, 57 42, 59 10, 55 3, 35 2, 20 7, 8 4'),
+    Matter.Vertices.fromPath('0 25, 3 37, 12 45, 25 48, 33 46, 48 45, 54 38, 55 23, 49 12, 29 9, 24 4, 11 9, 3 15')
+    //Matter.Vertices.fromPath('0 8, 8 18, 20 27, 33 30, 38 18, 34 10, 27 4, 20 0, 4 0 '),
 ];
+
+function flipVertices(vertices, flipH, flipV) {
+    return vertices.map(vertex => {
+        return {
+            x: flipH ? -vertex.x : vertex.x,
+            y: flipV ? -vertex.y : vertex.y
+        };
+    });
+}
 
 var ground = Bodies.rectangle(squareTopLeftX + squareSize / 2, squareTopLeftY + squareSize, squareSize, 100, {
     isStatic: true,
@@ -106,24 +118,27 @@ var rows = 4;
 var columns = 4; 
 for (var i = 0; i < rows; i++) {
     for (var j = 0; j < columns; j++) {
+        var scale = 0.5 + Math.random(); // Define scale here
+        var flipH = Math.random() < 0.5; // 50% chance to flip horizontally
+        var flipV = Math.random() < 0.5; // 50% chance to flip vertically
         var randomPotato = potatoes[Math.floor(Math.random() * potatoes.length)];
-        var scale = 0.5 + Math.random(); 
-        var scaledPotato = randomPotato.map(function(vertex) {
-            return { x: vertex.x * scale, y: vertex.y * scale };
+        var scaledFlippedPotato = randomPotato.map(function(vertex) {
+            var flippedX = flipH ? -vertex.x : vertex.x;
+            var flippedY = flipV ? -vertex.y : vertex.y;
+            return { x: flippedX * scale, y: flippedY * scale };
         });
-        //var shapeColor = getRandomShapeColor(); // Get a random color for each shape
         var x = squareTopLeftX + j * (squareSize / columns) + 50;
         var y = squareTopLeftY + i * (squareSize / rows) + 50;
-        shapes.push(Bodies.fromVertices(x, y, scaledPotato, {
+        shapes.push(Bodies.fromVertices(x, y, scaledFlippedPotato, {
             render: {
                 fillStyle: shapeColor,
                 strokeStyle: wallColor,
                 lineWidth: 0
-            },
-
+            }
         }));
     }
 }
+
 
 World.add(world, [ground, leftWall, rightWall, topWall, ...shapes]);
 
