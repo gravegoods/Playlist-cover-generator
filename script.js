@@ -23,6 +23,9 @@ function getRandomWallColor() {
 var wallColor = getRandomWallColor();
 var shapeColor = getRandomShapeColor();
 
+document.body.style.backgroundColor = wallColor;
+
+
 function getRandomShapeColor() {
     var color;
     do {
@@ -92,13 +95,13 @@ var columns = 4;
 for (var i = 0; i < rows; i++) {
     for (var j = 0; j < columns; j++) {
         var randomPotato = potatoes[Math.floor(Math.random() * potatoes.length)];
-        var scale = 0.55 + Math.random(); 
+        var scale = 0.5 + Math.random(); 
         var scaledPotato = randomPotato.map(function(vertex) {
             return { x: vertex.x * scale, y: vertex.y * scale };
         });
         //var shapeColor = getRandomShapeColor(); // Get a random color for each shape
-        var x = squareTopLeftX + j * (squareSize / columns) + 40;
-        var y = squareTopLeftY + i * (squareSize / rows) + 40;
+        var x = squareTopLeftX + j * (squareSize / columns) + 45;
+        var y = squareTopLeftY + i * (squareSize / rows) + 45;
         shapes.push(Bodies.fromVertices(x, y, scaledPotato, {
             render: {
                 fillStyle: shapeColor,
