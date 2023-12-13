@@ -106,6 +106,7 @@ for (var i = 0; i < rows; i++) {
         var scaledPotato = randomPotato.map(function(vertex) {
             return { x: vertex.x * scale, y: vertex.y * scale };
         });
+        //var shapeColor = getRandomShapeColor(); // Get a random color for each shape
         var x = squareTopLeftX + j * (squareSize / columns) + 40;
         var y = squareTopLeftY + i * (squareSize / rows) + 40;
         shapes.push(Bodies.fromVertices(x, y, scaledPotato, {
