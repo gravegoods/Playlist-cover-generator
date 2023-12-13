@@ -145,6 +145,18 @@ var mouseConstraint = MouseConstraint.create(engine, {
 World.add(world, mouseConstraint);
 render.mouse = mouse;
 
+Matter.Events.on(mouseConstraint, 'mousedown', function(event) {
+    var mousePosition = event.mouse.position;
+    var bodies = Matter.Composite.allBodies(world);
+
+    for (var i = 0; i < bodies.length; i++) {
+        if (Matter.Bounds.contains(bodies[i].bounds, mousePosition) && Matter.Vertices.contains(bodies[i].vertices, mousePosition)) {
+            Matter.World.remove(world, bodies[i]);
+            break;
+        }
+    }
+});
+
 ///////////////////// add new shape ///////////////////
 
 function addShape() {
