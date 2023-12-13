@@ -5,6 +5,8 @@ var Engine = Matter.Engine,
     Mouse = Matter.Mouse,
     MouseConstraint = Matter.MouseConstraint;
 
+///////////////////////// colors //////////////////////////////////
+
 var wallColors = [
     '#396250',
     '#5260DA',
@@ -35,6 +37,8 @@ function getRandomShapeColor() {
     return color;
 }
 
+///////////////////// engine world ////////////////////////////
+
 var engine = Engine.create(),
     world = engine.world;
 
@@ -51,18 +55,15 @@ var render = Render.create({
     }
 });
 
-
 var squareTopLeftX = 0;
 var squareTopLeftY = 0;
 var squareSize = 400;
+engine.world.gravity.y = 0.2;
+
+///////////////////////// shapes + walls  //////////////////////////
 
 var potatoes = [
-    //Matter.Vertices.fromPath('40 0, 60 20, 70 50, 50 70, 30 60, 10 40, 0 20'),
-    //Matter.Vertices.fromPath('30 10, 50 0, 70 20, 60 40, 40 60, 20 50, 10 30'),
-    //Matter.Vertices.fromPath('10 0, 70 10, 80 30, 70 60, 50 70, 20 60, 10 40, 0 30'),
-    //Matter.Vertices.fromPath('20 20, 40 10, 60 20, 70 40, 60 60, 40 70, 20 60, 10 40'),
     Matter.Vertices.fromPath('30 10, 50 10, 70 30, 60 60, 50 70, 30 70, 10 50, 10 30'),
-    //Matter.Vertices.fromPath('50 0, 85 20, 100 50, 85 80, 50 100, 15 80, 0 50, 15 20'),
     Matter.Vertices.fromPath('0 37, 3 55, 18 74, 46 71, 60 60, 67 30, 65 10, 62 4, 50 0, 32 18, 18 23'),
     Matter.Vertices.fromPath('0 30, 15 40, 68 40, 58 28, 28 18, 8 22'),
     Matter.Vertices.fromPath('0 8, 0 21, 8 32, 14 35, 23 41, 36 53, 45 58, 57 61, 68 54, 80 43, 77 28, 68 8, 58 0, 48 3, 38 3, 25 0, 3 0'),
@@ -113,13 +114,14 @@ for (var i = 0; i < rows; i++) {
                 strokeStyle: wallColor,
                 lineWidth: 0
             },
-            removeCollinear: 0.0 // Adjust this value as needed
 
         }));
     }
 }
 
 World.add(world, [ground, leftWall, rightWall, topWall, ...shapes]);
+
+////////////////////// interactivity ////////////////////
 
 var mouse = Mouse.create(render.canvas);
 
@@ -132,8 +134,6 @@ var mouseConstraint = MouseConstraint.create(engine, {
         }
     }
 });
-
-engine.world.gravity.y = 0.2;
 
 World.add(world, mouseConstraint);
 render.mouse = mouse;
