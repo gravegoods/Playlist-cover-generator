@@ -5,7 +5,10 @@ var Engine = Matter.Engine,
     Mouse = Matter.Mouse,
     MouseConstraint = Matter.MouseConstraint;
 
+
 ///////////////////////// colors //////////////////////////////////
+
+/* gets a color from the list of colors, then makes it into the wallColor*/
 
 var wallColors = [
     '#396250',
@@ -23,10 +26,10 @@ function getRandomWallColor() {
 }
 
 var wallColor = getRandomWallColor();
-var shapeColor = getRandomShapeColor();
-
 document.body.style.backgroundColor = wallColor;
 
+
+/* gets a color from the list, checks it's not the wallColor, and makes it into shapeColor */
 
 function getRandomShapeColor() {
     var color;
@@ -36,6 +39,8 @@ function getRandomShapeColor() {
     } while (color === wallColor); 
     return color;
 }
+
+var shapeColor = getRandomShapeColor();
 
 ///////////////////// engine world ////////////////////////////
 
@@ -58,7 +63,8 @@ var render = Render.create({
 var squareTopLeftX = 0;
 var squareTopLeftY = 0;
 var squareSize = 400;
-engine.world.gravity.y = 0.2;
+engine.world.gravity.y = 0.1;
+
 
 ///////////////////////// shapes + walls  //////////////////////////
 
@@ -121,6 +127,7 @@ for (var i = 0; i < rows; i++) {
 
 World.add(world, [ground, leftWall, rightWall, topWall, ...shapes]);
 
+
 ////////////////////// interactivity ////////////////////
 
 var mouse = Mouse.create(render.canvas);
@@ -138,14 +145,35 @@ var mouseConstraint = MouseConstraint.create(engine, {
 World.add(world, mouseConstraint);
 render.mouse = mouse;
 
+///////////////////// add new shape ///////////////////
+
+function addShape() {
+    var randomPotato = potatoes[Math.floor(Math.random() * potatoes.length)];
+    var scale = 0.5 + Math.random();
+    var scaledPotato = randomPotato.map(vertex => ({ x: vertex.x * scale, y: vertex.y * scale }));
+    var newShape = Bodies.fromVertices(200, 50, scaledPotato, { // Set the initial position
+        render: {
+            fillStyle: shapeColor,
+            strokeStyle: wallColor,
+            lineWidth: 0
+        }
+    });
+    World.add(world, newShape);
+}
+
+
+///////////////////////// run //////////////////////////
+
 Engine.run(engine);
 Render.run(render);
+
+//////////////////// making pngs ///////////////////////
 
 function exportCanvas() {
     var canvas = document.getElementById('myCanvas');
     var url = canvas.toDataURL("image/png");
     var link = document.createElement('a');
-    link.download = 'myCanvas.png';
+    link.download = 'coverart.png';
     link.href = url;
     link.click();
 }
@@ -154,3 +182,8 @@ document.getElementById('resetButton').addEventListener('click', function () {
     location.reload();
 });
 document.getElementById('exportButton').addEventListener('click', exportCanvas);
+
+document.getElementById('addShapeButton').addEventListener('click', addShape);
+
+
+
