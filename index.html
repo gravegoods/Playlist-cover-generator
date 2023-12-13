@@ -1,93 +1,61 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Generative Art with Tuber Shape Packing</title>
-<style>
-  #artCanvas {
-    width: 300px;
-    height: 300px;
-    display: block;
-    background-color: #013220;
-  }
-  .button {
-    padding: 10px;
-    margin: 5px;
-    cursor: pointer;
-  }
-</style>
+    <title>Playlist Cover Generator</title>
+    <script type="text/javascript" src="decomp.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.14.2/matter.min.js"></script>
+
+    <style type="text/css">
+      body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+}
+
+#canvas-container {
+    position: relative;
+    text-align: center;
+}
+
+#button-container {
+  padding: 8px;
+}
+
+canvas {
+    border: 0px solid #000;
+}
+
+button {
+    margin: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    display: inline;
+    border-radius: 50px;
+}
+
+#resetButton,
+#exportButton {
+    display: inline;
+    margin: 0 auto;
+}
+    </style>
 </head>
 <body>
-<canvas id="artCanvas" width="300" height="300"></canvas>
-<button class="button" onclick="fillCanvasWithTuberShapes()">Fill Canvas</button>
-<button class="button" onclick="savePattern()">Save</button>
 
-<script>
-function createTuberShape(ctx, centerX, centerY, maxRadius) {
-  var sides = Math.floor(Math.random() * (12 - 8 + 1)) + 8;
-  ctx.beginPath();
-  var startAngle = Math.random() * Math.PI * 2;
-  var angleIncrement = (2 * Math.PI) / sides;
-  for (var i = 0; i < sides; i++) {
-    var angle = startAngle + i * angleIncrement;
-    var sideLength = maxRadius * (0.8 + Math.random() * 0.4);
-    var x = centerX + sideLength * Math.cos(angle);
-    var y = centerY + sideLength * Math.sin(angle);
-    ctx.lineTo(x, y);
-  }
-  ctx.closePath();
-  ctx.fillStyle = '#8B4513';
-  ctx.fill();
-}
+      <div id="canvas-container">
+        <canvas id="myCanvas"></canvas>
+      </div>
 
-function isInShape(shapes, x, y, radius) {
-  return shapes.some(shape => {
-    var dx = shape.centerX - x;
-    var dy = shape.centerY - y;
-    var distance = Math.sqrt(dx * dx + dy * dy);
-    return distance < (shape.radius + radius) * 0.9; 
-  });
-}
+      <div id="button-container">
+        <button id="resetButton">Reset</button>
+        <button id="exportButton">Export as PNG</button>
+        
+      </div>
 
-function fillCanvasWithTuberShapes() {
-  var canvas = document.getElementById('artCanvas');
-  var ctx = canvas.getContext('2d');
-  var width = canvas.width;
-  var height = canvas.height;
-  ctx.clearRect(0, 0, width, height);
-  ctx.fillStyle = '#013220';
-  ctx.fillRect(0, 0, width, height);
 
-  var shapes = [];
-  var maxAttempts = 1000;
-  var attempts = 0;
-
-  while (attempts < maxAttempts) {
-    var radius = Math.random() * 20 + 10;
-    var x = Math.random() * (width - radius * 2) + radius;
-    var y = Math.random() * (height - radius * 2) + radius;
-
-    if (!isInShape(shapes, x, y, radius)) {
-      createTuberShape(ctx, x, y, radius);
-      shapes.push({ centerX: x, centerY: y, radius });
-    } else {
-      attempts++;
-    }
-  }
-}
-
-function savePattern() {
-  var canvas = document.getElementById('artCanvas');
-  var dataURL = canvas.toDataURL('image/png');
-  var downloadLink = document.createElement('a');
-  downloadLink.href = dataURL;
-  downloadLink.download = 'tuber-shape-packing.png';
-  document.body.appendChild(downloadLink);
-  downloadLink.click();
-  document.body.removeChild(downloadLink);
-}
-</script>
+<script type="text/javascript" src="script.js"></script>
 </body>
 </html>
-
