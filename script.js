@@ -55,9 +55,10 @@ var squareSize = 400;
 var potatoes = [
     Matter.Vertices.fromPath('40 0, 60 20, 70 50, 50 70, 30 60, 10 40, 0 20'),
     Matter.Vertices.fromPath('30 10, 50 0, 70 20, 60 40, 40 60, 20 50, 10 30'),
-    Matter.Vertices.fromPath('10 0, 70 10, 80 30, 70 60, 50 70, 20 60, 10 40, 0 30'),
+    //Matter.Vertices.fromPath('10 0, 70 10, 80 30, 70 60, 50 70, 20 60, 10 40, 0 30'),
     Matter.Vertices.fromPath('20 20, 40 10, 60 20, 70 40, 60 60, 40 70, 20 60, 10 40'),
     Matter.Vertices.fromPath('30 10, 50 10, 70 30, 60 60, 50 70, 30 70, 10 50, 10 30'),
+    Matter.Vertices.fromPath('50 0, 85 20, 100 50, 85 80, 50 100, 15 80, 0 50, 15 20'),
 ];
 
 var ground = Bodies.rectangle(squareTopLeftX + squareSize / 2, squareTopLeftY + squareSize, squareSize, 100, {
@@ -91,7 +92,7 @@ var columns = 4;
 for (var i = 0; i < rows; i++) {
     for (var j = 0; j < columns; j++) {
         var randomPotato = potatoes[Math.floor(Math.random() * potatoes.length)];
-        var scale = 0.5 + Math.random(); 
+        var scale = 0.55 + Math.random(); 
         var scaledPotato = randomPotato.map(function(vertex) {
             return { x: vertex.x * scale, y: vertex.y * scale };
         });
@@ -101,8 +102,8 @@ for (var i = 0; i < rows; i++) {
         shapes.push(Bodies.fromVertices(x, y, scaledPotato, {
             render: {
                 fillStyle: shapeColor,
-                strokeStyle: shapeColor,
-                lineWidth: 0
+                strokeStyle: wallColor,
+                lineWidth: 5
             }
         }));
     }
@@ -137,5 +138,7 @@ function exportCanvas() {
     link.click();
 }
 
+document.getElementById('resetButton').addEventListener('click', function () {
+    location.reload();
+});
 document.getElementById('exportButton').addEventListener('click', exportCanvas);
-
