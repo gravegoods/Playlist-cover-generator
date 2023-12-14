@@ -37,7 +37,19 @@ button {
     display: inline;
     border-radius: 50px;
     border: 0px;
+    background-color: rgba(255, 255, 255, 1);
+    transition: background-color 0.3s ease;
 }
+
+button:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+button:active {
+    background-color: rgba(255, 255, 255, 0.4); 
+}
+
+
 
 #resetButton,
 #exportButton {
@@ -57,6 +69,8 @@ button {
         <button id="resetButton" class="material-icons-outlined" title="refresh">refresh</button>
         <button id="addButton" class="material-icons-outlined" title="add shape">add</button>
         <button id="toggleGravityButton" class="material-icons-outlined" title="toggle gravity">bubble_chart</button>
+        <button id="randomizeColorsButton" class="material-icons-outlined" title="randomize colors">palette</button>
+
 
       </div>
 

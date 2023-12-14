@@ -118,9 +118,9 @@ var rows = 4;
 var columns = 4; 
 for (var i = 0; i < rows; i++) {
     for (var j = 0; j < columns; j++) {
-        var scale = 0.5 + Math.random(); // Define scale here
-        var flipH = Math.random() < 0.5; // 50% chance to flip horizontally
-        var flipV = Math.random() < 0.5; // 50% chance to flip vertically
+        var scale = 0.6 + Math.random();
+        var flipH = Math.random() < 0.5;
+        var flipV = Math.random() < 0.5;
         var randomPotato = potatoes[Math.floor(Math.random() * potatoes.length)];
         var scaledFlippedPotato = randomPotato.map(function(vertex) {
             var flippedX = flipH ? -vertex.x : vertex.x;
@@ -162,6 +162,8 @@ var mouseConstraint = MouseConstraint.create(engine, {
 World.add(world, mouseConstraint);
 render.mouse = mouse;
 
+
+
 // right click on a shape to delete it
 
 Matter.Events.on(mouseConstraint, 'mousedown', function(event) {
@@ -185,7 +187,7 @@ var isGravityEnabled = true; // Tracks the state of gravity
 
 function toggleGravity() {
     isGravityEnabled = !isGravityEnabled;
-    engine.world.gravity.y = isGravityEnabled ? 1 : 0; // Toggles gravity between 1 and 0
+    engine.world.gravity.y = isGravityEnabled ? .2 : 0; // Toggles gravity between 1 and 0
 }
 
 ///////////////////// add new shape ///////////////////
@@ -213,13 +215,24 @@ Render.run(render);
 //////////////////// making pngs ///////////////////////
 
 function exportCanvas() {
-    var canvas = document.getElementById('myCanvas');
-    var url = canvas.toDataURL("image/png");
+    var originalCanvas = document.getElementById('myCanvas');
+    var tempCanvas = document.createElement('canvas');
+    var tempCtx = tempCanvas.getContext('2d');
+    tempCanvas.width = originalCanvas.width;
+    tempCanvas.height = originalCanvas.height;
+    tempCtx.fillStyle = wallColor;
+    tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+    tempCtx.drawImage(originalCanvas, 0, 0);
+    var url = tempCanvas.toDataURL("image/png");
     var link = document.createElement('a');
     link.download = 'coverart.png';
     link.href = url;
     link.click();
 }
+
+
+
+//////////////////// initializing /////////////////////////
 
 document.getElementById('resetButton').addEventListener('click', function () {
     location.reload();
