@@ -183,11 +183,11 @@ Matter.Events.on(mouseConstraint, 'mousedown', function(event) {
 
 // toggle gravity
 
-var isGravityEnabled = true; // Tracks the state of gravity
+var isGravityEnabled = true;
 
 function toggleGravity() {
     isGravityEnabled = !isGravityEnabled;
-    engine.world.gravity.y = isGravityEnabled ? .2 : 0; // Toggles gravity between 1 and 0
+    engine.world.gravity.y = isGravityEnabled ? .2 : 0;
 }
 
 ///////////////////// add new shape ///////////////////
