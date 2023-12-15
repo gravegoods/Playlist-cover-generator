@@ -252,14 +252,19 @@ document.getElementById('toggleGravityButton').addEventListener('click', toggleG
 
 
 document.getElementById('changeColorsButton').addEventListener('click', function() {
-    var wallColor = getRandomWallColor();
+    wallColor = getRandomWallColor();
     [ground, leftWall, rightWall, topWall].forEach(function(wall) {
         wall.render.fillStyle = wallColor;
-    })
+    });
 
-    var shapeColor = getRandomShapeColor(); // Get and apply a new wall color
-    console.log(wallColor); // Print the hex code of the new wall color
-    console.log(shapeColor); // Print the hex code of the new wall color
+    shapeColor = getRandomShapeColor(); 
+    shapes.forEach(function(shape) {
+        shape.render.fillStyle = shapeColor;
+    });
+    
+
+    console.log(wallColor); 
+    console.log(shapeColor); 
     document.body.style.backgroundColor = wallColor;
 
 });
