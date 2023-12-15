@@ -18,9 +18,22 @@
 }
 
 #canvas-container {
-    position: relative;
     text-align: center;
+    width: 100%; 
+
 }
+
+#myCanvas {
+    width: 100%; 
+    max-width: 400px;
+}
+
+@media only screen and (max-width: 768px) {
+    #myCanvas {
+        max-width: 800px; 
+    }
+}
+
 
 #button-container {
   padding: 4px;
