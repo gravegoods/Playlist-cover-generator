@@ -250,21 +250,3 @@ document.addEventListener('contextmenu', function(event) {
 
 document.getElementById('toggleGravityButton').addEventListener('click', toggleGravity);
 
-
-document.getElementById('changeColorsButton').addEventListener('click', function() {
-    wallColor = getRandomWallColor();
-    [ground, leftWall, rightWall, topWall].forEach(function(wall) {
-        wall.render.fillStyle = wallColor;
-    });
-
-    shapeColor = getRandomShapeColor(); 
-    shapes.forEach(function(shape) {
-        shape.render.fillStyle = shapeColor;
-    });
-    
-
-    console.log(wallColor); 
-    console.log(shapeColor); 
-    document.body.style.backgroundColor = wallColor;
-
-});
