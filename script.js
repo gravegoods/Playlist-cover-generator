@@ -231,6 +231,9 @@ function exportCanvas() {
 }
 
 
+///////////////////// color updates /////////////////////
+
+
 
 //////////////////// initializing /////////////////////////
 
@@ -248,4 +251,15 @@ document.addEventListener('contextmenu', function(event) {
 document.getElementById('toggleGravityButton').addEventListener('click', toggleGravity);
 
 
+document.getElementById('changeColorsButton').addEventListener('click', function() {
+    var wallColor = getRandomWallColor();
+    [ground, leftWall, rightWall, topWall].forEach(function(wall) {
+        wall.render.fillStyle = wallColor;
+    })
 
+    var shapeColor = getRandomShapeColor(); // Get and apply a new wall color
+    console.log(wallColor); // Print the hex code of the new wall color
+    console.log(shapeColor); // Print the hex code of the new wall color
+    document.body.style.backgroundColor = wallColor;
+
+});
