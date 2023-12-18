@@ -6,13 +6,13 @@ p0
 [x] math.random along x axis for new shapes
 [x] add new shapes coordinates
 [x] make new shapes upside down and flipped 50% of the time
-[] merge 
-[] github pages
-[] add color change functionality
-[] info section
+[x] merge 
+[x] github pages
+[x] mobile friendly
 
 
 p1
 
 [] line artefacts
 [] random color option
+[] add color change functionality
