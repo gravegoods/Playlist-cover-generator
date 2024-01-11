@@ -17,7 +17,10 @@ var wallColors = [
     '#CFCBCD',
     '#DB4924',
     '#F4A9AB',
-    '#AA692F'
+    '#AA692F',
+    '#AE99D5',
+    '#CDB744',
+    '#834679'
 ];
 
 function getRandomWallColor() {
